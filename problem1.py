@@ -135,16 +135,16 @@ Here is the calculation for the Kruskal tensor:
         )
     )
 
-    print(fr'''
-Here is the calculation for the Tucker tensor:
-{tucker_tensor}
-    ''')
-
     # Validate the Tucker recomposition
     core, factors = tucker(
         tucker_tensor,
         rank = [2, 2, 2, 2]
     )
+
+    print(fr'''
+Here is the calculation for the Tucker tensor:
+{tucker_tensor}
+    ''')
 
     # Part 3
     _x11 = np.array([
@@ -183,10 +183,13 @@ Here is the calculation for the Tucker tensor:
         [4, 2, 9]
     ])
 
-    core = np.array([
+    tensor = np.array([
         [_x11, _x12],
         [_x21, _x22],
         [_x31, _x32]
     ])
 
+    core, factors = tucker(
+        tucker_tensor
+    )
 
