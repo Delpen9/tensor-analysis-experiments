@@ -2,21 +2,6 @@ import numpy as np
 from tensorly import tucker_to_tensor
 from tensorly.decomposition import tucker
 
-# def tucker_reconstruction(G, U_modes):
-#     num_modes = len(G.shape)
-#     mode_dims = [U_mode.shape[0] for U_mode in U_modes]
-
-#     reconstructed_tensor = np.zeros(mode_dims)
-#     for mode_n in range(num_modes):
-#         mode_matrix = U_modes[mode_n]
-#         mode_matrix_t = np.transpose(mode_matrix)
-#         for i, row in enumerate(mode_matrix_t):
-#             index = [slice(None) for _ in range(num_modes)]
-#             index[mode_n] = i
-#             reconstructed_tensor[tuple(index)] = np.tensordot(row, G, axes = (1, mode_n))
-
-#     return reconstructed_tensor
-
 if __name__ == '__main__':
     _lambda = np.array([41.9075, 18.6722])
 
@@ -193,3 +178,4 @@ Here is the calculation for the Tucker tensor:
         tucker_tensor
     )
 
+    print(core)
