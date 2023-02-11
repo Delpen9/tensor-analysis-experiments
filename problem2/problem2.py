@@ -7,28 +7,18 @@ import scipy.io
 
 # Plotting
 import cv2
+import matplotlib.pyplot
+import seaborn
 
-def alternating_least_squares(
-    training_set : np.ndarray,
-    tolerance : float = 1e-04,
-    max_iterations : int = 50,
-    dimension : int = 20
-) -> np.ndarray:
-    '''
-    alternating_least_squares()
-    '''
-    decomposition = np.zeros((dimension, dimension, k))
+# Decomposition
+from tensorly.decomposition import non_negative_tucker_hals
 
-    for i in range(k):
-        U, s, V = np.linalg.svd(training_set[:, :, i], full_matrices = False)
+# Modeling
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import RandomizedSearchCV
 
-        U = U[:, :dimension]
-        s = np.diag(s[:dimension])
-        V = V[:dimension, :]
-        
-        decomposition[:, :, i] = U.dot(s).dot(V)
-
-    return decomposition
+# Metrics
+from sklearn.metrics import accuracy_score, roc_auc_score
 
 if __name__ == '__main__':
     current_path = os.path.abspath(__file__)
@@ -73,5 +63,36 @@ if __name__ == '__main__':
     file_directory = os.path.abspath(os.path.join(current_path, '..', '..', 'output', 'Problem2', 'part_1_vector_image_label_1.png'))
     cv2.imwrite(file_directory, vector_encoding_1_label)
 
-
     # Part 2
+    x_train_core, factors = non_negative_tucker_hals(_x_reshaped_normalized, rank = [100, 20, 20], tol = 1e-4, n_iter_max = 50)
+
+    x_train = x_train_core.reshape(-1, 400).copy()
+    y_train = _y.copy()
+
+    clf = RandomForestClassifier(n_estimators = 500, random_state = 1)
+    clf.fit(x_train, y_train.flatten())
+
+    y_pred = clf.predict(x_train)
+
+    accuracy = accuracy_score(y_train, y_pred)
+    print(fr'Accuracy on the training data: {accuracy}.')
+
+    # Part 3.a
+    x_test_core, factors = non_negative_tucker_hals(x_test_reshaped_normalized, rank = [20, 20, 20], tol = 1e-4, n_iter_max = 50)
+    x_test = x_test_core.reshape(-1, 400).copy()
+
+    y_pred = clf.predict(x_test)
+
+    accuracy = accuracy_score(y_test, y_pred)
+    print(fr'Accuracy on the test data: {accuracy}.')
+
+    x_noisy_core, factors = non_negative_tucker_hals(x_noisy_reshaped_normalized, rank = [20, 20, 20], tol = 1e-4, n_iter_max = 50)
+    x_noisy = x_noisy_core.reshape(-1, 400).copy()
+
+    y_pred = clf.predict(x_noisy)
+
+    accuracy = accuracy_score(y_noisy, y_pred)
+    print(fr'Accuracy on the noisy data: {accuracy}.')
+
+    # Part 3.b
+
