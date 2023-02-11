@@ -1,65 +1,49 @@
+# Standard Libraries
+import os
 import numpy as np
 
-def tucker_decomposition_als(
-    tensor : np.ndarray,
+# Load .mat files
+import scipy.io
+
+def HOSVD(
+    X : np.ndarray,
     R1 : int = 30,
     R2 : int = 30,
-    R3 : int = 20,
-    max_iterations : int = 50,
-    tolerance : float = 1e-4
+    R3 : int = 20
 ) -> tuple[
         np.ndarray,
         tuple[np.ndarray, np.ndarray, np.ndarray]
     ]:
-    '''
-    Perform Tucker decomposition on a tensor using Alternating Least Squares (ALS) algorithm.
-
-    Parameters
-    ----------
-    tensor : numpy.ndarray
-        The input tensor with shape (I, J, K).
-    R1 : int
-        The desired rank of the first factor matrix, by default 30.
-    R2 : int
-        The desired rank of the second factor matrix, by default 30.
-    R3 : int
-        The desired rank of the third factor matrix, by default 20.
-    max_iterations : int, optional
-        The maximum number of iterations to perform, by default 50.
-    tolerance : float, optional
-        The tolerance for the residual, by default 1e-4.
-
-    Returns
-    -------
-    numpy.ndarray
-        The core tensor with shape (R1, R2, R3).
-    list of numpy.ndarray
-        Factor matrices
-    '''
-    I, J, K = tensor.shape
-
-    A = np.random.rand(I, R1)
-    B = np.random.rand(J, R2)
-    C = np.random.rand(K, R3)
-
-    for iteration in range(max_iterations):
-        for i in range(I):
-            A[i, :] = np.linalg.lstsq(np.dot(B, C.T), tensor[i, :, :].flatten(), rcond=None)[0]
-
-        for j in range(J):
-            B[j, :] = np.linalg.lstsq(np.dot(A, C.T), tensor[:, j, :].flatten(), rcond=None)[0]
-
-        for k in range(K):
-            C[k, :] = np.linalg.lstsq(np.dot(A, B.T), tensor[:, :, k].flatten(), rcond=None)[0]
-
-        reconstructed_tensor = np.einsum('ijk,ik,jk->ijj', tensor, A, B, C)
-
-        residual = np.linalg.norm(tensor - reconstructed_tensor)
-        if residual < tolerance:
-            break
-
-    core_tensor = np.einsum('ik,jk,kk->ijk', A, B, C)
-    return (core_tensor, (A, B, C))
+    # Initialize the core tensor G
+    G = np.copy(X)
+    
+    # Initialize the left matrices A1, A2, A3
+    A1 = np.zeros((X.shape[0], R1))
+    A2 = np.zeros((X.shape[1], R2))
+    A3 = np.zeros((X.shape[2], R3))
+    
+    # Update the left matrix A1
+    for i in range(X.shape[0]):
+        G[i, :, :] = np.dot(A1[i, :], np.dot(A2, A3.T))
+    U, S, VT = np.linalg.svd(np.reshape(G, (X.shape[0], -1)), full_matrices=False)
+    A1 = U[:, :R1]
+    G = np.dot(np.diag(S[:R1]), VT[:R1, :]).reshape(G.shape)
+    
+    # Update the left matrix A2
+    for i in range(X.shape[1]):
+        G[:, i, :] = np.dot(A2[i, :], np.dot(A1, A3.T))
+    U, S, VT = np.linalg.svd(np.reshape(G, (X.shape[1], -1)), full_matrices=False)
+    A2 = U[:, :R2]
+    G = np.dot(np.diag(S[:R2]), VT[:R2, :]).reshape(G.shape)
+    
+    # Update the left matrix A3
+    for i in range(X.shape[2]):
+        G[:, :, i] = np.dot(A3[i, :], np.dot(A1, A2.T))
+    U, S, VT = np.linalg.svd(np.reshape(G, (X.shape[2], -1)), full_matrices=False)
+    A3 = U[:, :R3]
+    G = np.dot(np.diag(S[:R3]), VT[:R3, :]).reshape(G.shape)
+    
+    return (G, (A1, A2, A3))
 
 def relative_error(
     tensor : np.ndarray,
@@ -92,4 +76,11 @@ def relative_error(
     return relative_error
 
 if __name__ == '__main__':
-    core, factors = tucker_decomposition_als()
+    current_path = os.path.abspath(__file__)
+
+    file_directory = os.path.abspath(os.path.join(current_path, '..', '..', 'data', 'Problem3', 'ATT.mat'))
+    _a = scipy.io.loadmat(file_directory)['A']
+
+    core, factors = HOSVD(_a)
+
+    print(core.shape)
