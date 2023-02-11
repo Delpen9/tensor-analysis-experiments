@@ -16,6 +16,7 @@ from tensorly.decomposition import non_negative_tucker_hals
 # Modeling
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import randint as sp_randint
 
 # Metrics
 from sklearn.metrics import accuracy_score, roc_auc_score
@@ -64,9 +65,11 @@ if __name__ == '__main__':
     cv2.imwrite(file_directory, vector_encoding_1_label)
 
     # Part 2
-    x_train_core, factors = non_negative_tucker_hals(_x_reshaped_normalized, rank = [100, 20, 20], tol = 1e-4, n_iter_max = 50)
+    rank = 20
 
-    x_train = x_train_core.reshape(-1, 400).copy()
+    x_train_core, factors = non_negative_tucker_hals(_x_reshaped_normalized, rank = [100, rank, rank], tol = 1e-4, n_iter_max = 50)
+
+    x_train = x_train_core.reshape(-1, rank**2).copy()
     y_train = _y.copy()
 
     clf = RandomForestClassifier(n_estimators = 500, random_state = 1)
@@ -77,22 +80,22 @@ if __name__ == '__main__':
     accuracy = accuracy_score(y_train, y_pred)
     print(fr'Accuracy on the training data: {accuracy}.')
 
-    # Part 3.a
-    x_test_core, factors = non_negative_tucker_hals(x_test_reshaped_normalized, rank = [20, 20, 20], tol = 1e-4, n_iter_max = 50)
-    x_test = x_test_core.reshape(-1, 400).copy()
+    # Part 3
+    # NOTE: Ways to improve this process include:
+    # (1) Using a model that is more capable of discovering non-linear relations between pixels
+    # (2) Further reducing the rank of the corresponding core tensors to reduce the effects of overfitting.
+    x_test_core, factors = non_negative_tucker_hals(x_test_reshaped_normalized, rank = [20, rank, rank], tol = 1e-4, n_iter_max = 50)
+    x_test = x_test_core.reshape(-1, rank**2).copy()
 
     y_pred = clf.predict(x_test)
 
     accuracy = accuracy_score(y_test, y_pred)
     print(fr'Accuracy on the test data: {accuracy}.')
 
-    x_noisy_core, factors = non_negative_tucker_hals(x_noisy_reshaped_normalized, rank = [20, 20, 20], tol = 1e-4, n_iter_max = 50)
-    x_noisy = x_noisy_core.reshape(-1, 400).copy()
+    x_noisy_core, factors = non_negative_tucker_hals(x_noisy_reshaped_normalized, rank = [20, rank, rank], tol = 1e-4, n_iter_max = 50)
+    x_noisy = x_noisy_core.reshape(-1, rank**2).copy()
 
     y_pred = clf.predict(x_noisy)
 
     accuracy = accuracy_score(y_noisy, y_pred)
     print(fr'Accuracy on the noisy data: {accuracy}.')
-
-    # Part 3.b
-
