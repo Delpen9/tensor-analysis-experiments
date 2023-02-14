@@ -9,39 +9,42 @@ def HOSVD(
     X : np.ndarray,
     R1 : int = 30,
     R2 : int = 30,
-    R3 : int = 20
+    R3 : int = 20,
+    tolerance : float = 1e-4
 ) -> tuple[
         np.ndarray,
         tuple[np.ndarray, np.ndarray, np.ndarray]
     ]:
-    # Initialize the core tensor G
-    G = np.copy(X)
-    
-    # Initialize the left matrices A1, A2, A3
-    A1 = np.zeros((X.shape[0], R1))
-    A2 = np.zeros((X.shape[1], R2))
-    A3 = np.zeros((X.shape[2], R3))
-    
-    # Update the left matrix A1
-    for i in range(X.shape[0]):
-        G[i, :, :] = np.dot(A1[i, :], np.dot(A2, A3.T))
-    U, S, VT = np.linalg.svd(np.reshape(G, (X.shape[0], -1)), full_matrices=False)
-    A1 = U[:, :R1]
-    G = np.dot(np.diag(S[:R1]), VT[:R1, :]).reshape(G.shape)
-    
-    # Update the left matrix A2
-    for i in range(X.shape[1]):
-        G[:, i, :] = np.dot(A2[i, :], np.dot(A1, A3.T))
-    U, S, VT = np.linalg.svd(np.reshape(G, (X.shape[1], -1)), full_matrices=False)
-    A2 = U[:, :R2]
-    G = np.dot(np.diag(S[:R2]), VT[:R2, :]).reshape(G.shape)
-    
-    # Update the left matrix A3
-    for i in range(X.shape[2]):
-        G[:, :, i] = np.dot(A3[i, :], np.dot(A1, A2.T))
-    U, S, VT = np.linalg.svd(np.reshape(G, (X.shape[2], -1)), full_matrices=False)
-    A3 = U[:, :R3]
-    G = np.dot(np.diag(S[:R3]), VT[:R3, :]).reshape(G.shape)
+    I, J, K = X.shape
+
+    G = np.random.rand(R1, R2, R3)
+
+    A = np.random.rand(I, R1)
+    B = np.random.rand(J, R2)
+    C = np.random.rand(K, R3)
+
+    convergence = False
+
+    factors = [A, B, C]
+    dimensions = [R1, R2, R3]
+    while not convergence:
+        G_previous = G.copy()
+
+        for _k in range(len(factors)):
+            y = np.tensordot(X, factor[0].T, axes=([1], [0])) # First mode
+            y = np.tensordot(y, factor[1].T, axes=([2], [0])) # Second mode
+            y = np.tensordot(y, factor[2].T, axes=([2], [1])) # Third mode
+
+            u, s, vh = np.linalg.svd(y, full_matrices = False)
+
+            factor[_k] = s[:dimensions[_k]]
+
+        G = np.tensordot(X, A.T, axes=([1], [0])) # First mode
+        G = np.tensordot(G, B.T, axes=([2], [0])) # Second mode
+        G = np.tensordot(G, C.T, axes=([2], [1])) # Third mode
+
+        is_close = np.allclose(G, G_previous, rtol = tolerance, atol = 0)
+        convergence = True if is_close else False
     
     return (G, (A1, A2, A3))
 
