@@ -76,7 +76,7 @@ def HOSVD(
     R2 : int = 30,
     R3 : int = 20,
     tolerance : float = 1e-4,
-    max_iterations : int = 500
+    max_iterations : int = 100
 ) -> tuple[
         np.ndarray,
         tuple[np.ndarray, np.ndarray, np.ndarray]
@@ -85,9 +85,9 @@ def HOSVD(
 
     G = np.zeros(shape = (R1, R2, R3), dtype = float)
 
-    A = np.zeros(shape = (I, R1), dtype = float)
-    B = np.zeros(shape = (J, R2), dtype = float)
-    C = np.zeros(shape = (K, R3), dtype = float)
+    A = np.random.rand(I, R1).astype(float)
+    B = np.random.rand(J, R2).astype(float)
+    C = np.random.rand(K, R3).astype(float)
 
     convergence = False
     max_iteration_achieved = False
@@ -103,14 +103,16 @@ def HOSVD(
         for _k in range(len(factors)):
             y = tensorly.tenalg.multi_mode_dot(X.copy(), factors, skip = _k, transpose = True)
 
-            U, _, _ = np.linalg.svd(np.reshape(np.moveaxis(y, _k, 0), (y.shape[_k], -1)), full_matrices = False)
+            mode = tensorly.base.unfold(y, mode = _k)
+
+            U, _, _ = np.linalg.svd(mode, full_matrices = True)
 
             leading_left_singular_values = U[:core_dimensions[_k]].T
             factors[_k] = leading_left_singular_values
 
         G = tensorly.tenalg.multi_mode_dot(X.copy(), factors, transpose = True)
 
-        is_close = np.allclose(G, G_previous, rtol = tolerance, atol = 0)
+        is_close = np.sum(G) - np.sum(G_previous) < tolerance
         convergence = True if is_close else False
 
         max_iteration_achieved = True if iteration == max_iterations else False
@@ -123,7 +125,7 @@ if __name__ == '__main__':
     current_path = os.path.abspath(__file__)
 
     file_directory = os.path.abspath(os.path.join(current_path, '..', '..', 'data', 'Problem3', 'ATT.mat'))
-    _a = scipy.io.loadmat(file_directory)['A']
+    _a = scipy.io.loadmat(file_directory)['A'].astype(float)
 
     core, factors = HOSVD(_a)
 
