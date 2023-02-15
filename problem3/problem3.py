@@ -9,6 +9,32 @@ import scipy
 # Load .mat files
 import scipy.io
 
+def hard_thresholding(
+    core : np.ndarray,
+    percentile : float
+):
+    '''
+    Threshold a tensor given a percentile.
+
+    Parameters
+    ----------
+        core (np.ndarray):
+            A numpy array representing the core tensor.
+        percentile (float):
+            A value between 0 and 1 representing the percentage
+            of coefficients to keep.
+
+    Returns
+    -------
+        thresholded_core (np.ndarray):
+            A NumPy array representing the core tensor after
+            hard thresholding.
+    '''
+    threshold_value = np.percentile(core, percentile * 100)
+    thresholded_core = np.where(core >= threshold_value, core, 0)
+
+    return thresholded_core
+
 def relative_error(
     tensor : np.ndarray,
     core : np.ndarray
@@ -50,7 +76,7 @@ def HOSVD(
     R2 : int = 30,
     R3 : int = 20,
     tolerance : float = 1e-4,
-    max_iterations : int = 100
+    max_iterations : int = 500
 ) -> tuple[
         np.ndarray,
         tuple[np.ndarray, np.ndarray, np.ndarray]
@@ -64,25 +90,22 @@ def HOSVD(
     C = np.zeros(shape = (K, R3), dtype = float)
 
     convergence = False
+    max_iteration_achieved = False
 
     factors = [A, B, C]
     core_dimensions = [R1, R2, R3]
     tensor_dimensions = [I, J, K]
 
     iteration = 1
-    while not convergence:
+    while not convergence and not max_iteration_achieved:
         G_previous = G.copy()
 
         for _k in range(len(factors)):
             y = tensorly.tenalg.multi_mode_dot(X.copy(), factors, skip = _k, transpose = True)
 
-            before = _k - 1
-            after = (_k + 1) % 3
-            y = y.reshape(y.shape[_k], y.shape[before] * y.shape[after])
+            U, _, _ = np.linalg.svd(np.reshape(np.moveaxis(y, _k, 0), (y.shape[_k], -1)), full_matrices = False)
 
-            u, s, vh = np.linalg.svd(y, full_matrices = False)
-
-            leading_left_singular_values = u[:core_dimensions[_k]].T
+            leading_left_singular_values = U[:core_dimensions[_k]].T
             factors[_k] = leading_left_singular_values
 
         G = tensorly.tenalg.multi_mode_dot(X.copy(), factors, transpose = True)
@@ -90,7 +113,7 @@ def HOSVD(
         is_close = np.allclose(G, G_previous, rtol = tolerance, atol = 0)
         convergence = True if is_close else False
 
-        convergence = True if iteration == 100 else False
+        max_iteration_achieved = True if iteration == max_iterations else False
 
         iteration += 1
     
@@ -104,8 +127,11 @@ if __name__ == '__main__':
 
     core, factors = HOSVD(_a)
 
-    print(_a.shape)
+    relative_error_value = relative_error(_a, core)
+    print(relative_error_value)
 
-    print(relative_error(_a, core))
-
-    print(core.shape)
+    percentiles = [0.1, 0.2, 0.3, 0.4, 0.5]
+    for percentile in percentiles:
+        thresholded_core = hard_thresholding(core, percentile)
+        relative_error_value = relative_error(_a, thresholded_core)
+        print(relative_error_value)
