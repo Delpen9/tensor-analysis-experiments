@@ -30,8 +30,8 @@ def hard_thresholding(
             A NumPy array representing the core tensor after
             hard thresholding.
     '''
-    threshold_value = np.percentile(core, percentile * 100)
-    thresholded_core = np.where(core >= threshold_value, core, 0)
+    threshold_value = np.percentile(np.abs(core.flatten()), (1 - percentile) * 100)
+    thresholded_core = np.where(np.abs(core) >= threshold_value, core, 0)
 
     return thresholded_core
 
@@ -101,13 +101,13 @@ def HOSVD(
         G_previous = G.copy()
 
         for _k in range(len(factors)):
-            y = tensorly.tenalg.multi_mode_dot(X.copy(), factors, skip = _k, transpose = True)
+            y = tensorly.tenalg.multi_mode_dot(X.copy(), factors, skip = _k, modes = [0, 1, 2], transpose = True)           
 
-            mode = tensorly.base.unfold(y, mode = _k)
+            mode_k_matrix = tensorly.base.unfold(y, mode = _k)
 
-            U, _, _ = np.linalg.svd(mode, full_matrices = True)
+            U, _, _ = np.linalg.svd(mode_k_matrix)
 
-            leading_left_singular_values = U[:core_dimensions[_k]].T
+            leading_left_singular_values = U[:, :core_dimensions[_k]]
             factors[_k] = leading_left_singular_values
 
         G = tensorly.tenalg.multi_mode_dot(X.copy(), factors, transpose = True)
