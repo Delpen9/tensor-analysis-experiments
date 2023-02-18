@@ -67,6 +67,23 @@ if __name__ == '__main__':
                 file_contents = filedata.read()
                 doc.append(file_contents + '\n\n')
 
-    doc.append(NewPage())
+    # Part 2
+    with doc.create(Section('Part 2')):
+        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_5.txt'))
+        with open(data_path, 'r') as filedata:
+            file_contents = filedata.read()
+            doc.append(file_contents + '\n\n')
+
+    # Part 3
+    with doc.create(Section('Part 3')):
+        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_6.txt'))
+        with open(data_path, 'r') as filedata:
+            file_contents = filedata.read()
+            doc.append(file_contents + '\n\n')
+
+        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_7.txt'))
+        with open(data_path, 'r') as filedata:
+            file_contents = filedata.read()
+            doc.append(file_contents + '\n\n')
 
     doc.generate_pdf('problem1', clean_tex = False)
