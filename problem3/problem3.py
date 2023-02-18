@@ -1,6 +1,8 @@
 # Standard Libraries
 import os
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 # Matrix math
 import tensorly
@@ -70,6 +72,30 @@ def relative_error(
 
     return relative_error
 
+def save_images_to_directory(
+    tensor : np.ndarray,
+    directory : str,
+    image_names : str
+) -> None:
+    '''
+    Save images at indices 5, 10, and 15 for a given 3-dimensional numpy tensor to a given directory.
+
+    Parameters:
+    tensor (numpy.ndarray):
+        The 3-dimensional numpy tensor containing the images.
+    directory (str):
+        The path to the directory where the images should be saved.
+    image_names (str):
+        Unique name given for current run.
+    '''
+    image_5 = tensor[:, :, 5]
+    image_10 = tensor[:, :, 10]
+    image_15 = tensor[:, :, 15]
+
+    plt.imsave(os.path.join(directory, fr'{image_names}_5.png'), image_5)
+    plt.imsave(os.path.join(directory, fr'{image_names}_10.png'), image_10)
+    plt.imsave(os.path.join(directory, fr'{image_names}_15.png'), image_15)
+
 def HOSVD(
     X : np.ndarray,
     R1 : int = 30,
@@ -132,8 +158,19 @@ if __name__ == '__main__':
     relative_error_value = relative_error(_a, core)
     print(relative_error_value)
 
-    percentiles = [0.1, 0.2, 0.3, 0.4, 0.5]
+    threshold_directory = os.path.abspath(os.path.join(current_path, '..', '..', 'output', 'Problem3'))
+
+    percentiles = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
+    relative_errors = []
     for percentile in percentiles:
         thresholded_core = hard_thresholding(core, percentile)
+        save_images_to_directory(thresholded_core, threshold_directory, fr'percentile_{percentile}_image')
+
         relative_error_value = relative_error(_a, thresholded_core)
-        print(relative_error_value)
+        relative_errors.append(relative_error_value)
+    relative_errors = np.array(relative_errors)
+
+    df_percentile = pd.DataFrame(np.vstack((percentiles, relative_errors)).T, columns = ['percentiles', 'relative_errors'])
+
+    file_directory = os.path.abspath(os.path.join(current_path, '..', '..', 'output', 'Problem3', 'percentiles.csv'))
+    df_percentile.to_csv(file_directory, index = False)
