@@ -1,0 +1,1 @@
+The mean-square error for Tucker decomposition is: 2.6217621054926816.

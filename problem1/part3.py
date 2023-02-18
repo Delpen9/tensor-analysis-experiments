@@ -23,7 +23,7 @@ def compute_mse(
     mse = np.mean((original - recomposed) ** 2)
     return mse
 
-def part3() -> None:
+def part3() -> tuple[str, str]:
     _x11 = np.array([
         [4, 2, 6],
         [5, 2, 9],
@@ -81,10 +81,7 @@ def part3() -> None:
 
     tucker_mse = compute_mse(tensor, tucker_tensor_recomposition)
 
-    print(fr'''
-The mean-square error for Tucker decomposition is:
-{tucker_mse}
-    ''')
+    mean_square_error_tucker_text = fr'The mean-square error for Tucker decomposition is: {tucker_mse}.'
 
     # CP
     parafac_factors = parafac(tensor, rank = 2)
@@ -92,7 +89,6 @@ The mean-square error for Tucker decomposition is:
     parafac_tensor_recomposition = kruskal_to_tensor(parafac_factors)
     parafac_mse = compute_mse(tensor, parafac_tensor_recomposition)
 
-    print(fr'''
-The mean-square error for CP decomposition is:
-{parafac_mse}
-    ''')
+    mean_square_error_cp_text = fr'The mean-square error for CP decomposition is: {parafac_mse}'
+
+    return (mean_square_error_tucker_text, mean_square_error_cp_text)

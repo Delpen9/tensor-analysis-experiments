@@ -2,7 +2,7 @@ import numpy as np
 from tensorly import tucker_to_tensor
 from tensorly.decomposition import tucker
 
-def part2() -> None:
+def part2() -> str:
     _g_11 = np.array([
         [35.2489, 0.7832],
         [0.2884, -4.2162]
@@ -58,7 +58,6 @@ def part2() -> None:
         )
     )
 
-    print(fr'''
-Here is the calculation for the Tucker tensor:
-{tucker_tensor}
-    ''')
+    output_text = fr'Here is the calculation for the Tucker tensor: {tucker_tensor}.'
+
+    return output_text

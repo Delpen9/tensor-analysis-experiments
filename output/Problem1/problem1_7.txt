@@ -1,0 +1,1 @@
+The mean-square error for CP decomposition is: 3.19421561560853

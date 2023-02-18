@@ -78,7 +78,7 @@ if __name__ == '__main__':
     y_pred = clf.predict(x_train)
 
     accuracy = accuracy_score(y_train, y_pred)
-    print(fr'Accuracy on the training data: {accuracy}.')
+    _text_1 = fr'Accuracy on the training data: {accuracy}.'
 
     # Part 3
     # NOTE: Ways to improve this process include:
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     y_pred = clf.predict(x_test)
 
     accuracy = accuracy_score(y_test, y_pred)
-    print(fr'Accuracy on the test data: {accuracy}.')
+    _text_2 = fr'Accuracy on the test data: {accuracy}.'
 
     x_noisy_core, factors = non_negative_tucker_hals(x_noisy_reshaped_normalized, rank = [20, rank, rank], tol = 1e-4, n_iter_max = 50)
     x_noisy = x_noisy_core.reshape(-1, rank**2).copy()
@@ -98,4 +98,11 @@ if __name__ == '__main__':
     y_pred = clf.predict(x_noisy)
 
     accuracy = accuracy_score(y_noisy, y_pred)
-    print(fr'Accuracy on the noisy data: {accuracy}.')
+    _text_3 = fr'Accuracy on the noisy data: {accuracy}.'
+
+    file_directory = os.path.abspath(os.path.join(current_path, '..', '..', 'output', 'Problem2'))
+
+    text_list = [_text_1, _text_2, _text_3]
+    for i in range(len(text_list)):
+        with open(fr'{file_directory}/problem2_{i + 1}.txt', 'w') as filewriter:
+            filewriter.write(text_list[i])

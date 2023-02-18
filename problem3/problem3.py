@@ -156,7 +156,10 @@ if __name__ == '__main__':
     core, factors = HOSVD(_a)
 
     relative_error_value = relative_error(_a, core)
-    print(relative_error_value)
+    text_file_directory = os.path.abspath(os.path.join(current_path, '..', '..', 'output', 'Problem3'))
+    
+    with open(fr'{text_file_directory}/problem3.txt', 'w') as filewriter:
+        filewriter.write(f'The relative error for the core tensor is: {relative_error_value}.\n')
 
     threshold_directory = os.path.abspath(os.path.join(current_path, '..', '..', 'output', 'Problem3'))
 
