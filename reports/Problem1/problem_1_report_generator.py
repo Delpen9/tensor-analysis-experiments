@@ -51,8 +51,18 @@ if __name__ == '__main__':
                 file_contents = filedata.read()
                 doc.append(file_contents)
 
-        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_2.txt'))
         with doc.create(Subsection('Subsection B')):
+            data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_2.txt'))
+            with open(data_path, 'r') as filedata:
+                file_contents = filedata.read()
+                doc.append(file_contents)
+
+            data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_3.txt'))
+            with open(data_path, 'r') as filedata:
+                file_contents = filedata.read()
+                doc.append(file_contents)
+
+            data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_4.txt'))
             with open(data_path, 'r') as filedata:
                 file_contents = filedata.read()
                 doc.append(file_contents)
