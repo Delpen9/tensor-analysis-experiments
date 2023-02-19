@@ -46,48 +46,98 @@ if __name__ == '__main__':
     current_path = os.path.abspath(__file__)
 
     # Part 1
-    # TODO: Find some way to write out the calculation
     with doc.create(Section('Part 1')):
-        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_1.txt'))
-        with doc.create(Subsection('Subsection A')):
-            with open(data_path, 'r') as filedata:
-                file_contents = filedata.read()
-                doc.append(file_contents + '\n\n')
-
-        with doc.create(Subsection('Subsection B')):
-            data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_2.txt'))
-            with open(data_path, 'r') as filedata:
-                file_contents = filedata.read()
-                doc.append(file_contents + '\n\n')
-
-            data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_3.txt'))
-            with open(data_path, 'r') as filedata:
-                file_contents = filedata.read()
-                doc.append(file_contents + '\n\n')
-
-            data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_4.txt'))
-            with open(data_path, 'r') as filedata:
-                file_contents = filedata.read()
-                doc.append(file_contents + '\n\n')
+        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'problem3.txt'))
+        with open(data_path, 'r') as filedata:
+            file_contents = filedata.read()
+            doc.append(file_contents + '\n\n')
 
     # Part 2
     with doc.create(Section('Part 2')):
-        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_5.txt'))
+        doc.append('Below is the relative error for each threshold:\n')
+        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentiles.csv'))
         with open(data_path, 'r') as filedata:
             file_contents = filedata.read()
             doc.append(file_contents + '\n\n')
+        
+        # Percentile = 0.1
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_01_image_5.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.1; Image 5')
 
-    # Part 3
-    # TODO: Include explanation
-    with doc.create(Section('Part 3')):
-        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_6.txt'))
-        with open(data_path, 'r') as filedata:
-            file_contents = filedata.read()
-            doc.append(file_contents + '\n\n')
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_01_image_10.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.1; Image 10')
 
-        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_7.txt'))
-        with open(data_path, 'r') as filedata:
-            file_contents = filedata.read()
-            doc.append(file_contents + '\n\n')
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_01_image_15.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.1; Image 15')
 
-    doc.generate_pdf('problem1', clean_tex = False)
+        # Percentile = 0.2
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_02_image_5.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.2; Image 5')
+
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_02_image_10.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.2; Image 10')
+
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_02_image_15.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.2; Image 15')
+
+        # Percentile = 0.3
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_03_image_5.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.3; Image 5')
+
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_03_image_10.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.3; Image 10')
+
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_03_image_15.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.3; Image 15')
+
+        # Percentile = 0.4
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_04_image_5.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.4; Image 5')
+
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_04_image_10.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.4; Image 10')
+
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_04_image_15.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.4; Image 15')
+
+        # Percentile = 0.5
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_05_image_5.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.5; Image 5')
+
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_05_image_10.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.5; Image 10')
+
+        image_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem3', 'percentile_05_image_15.png'))
+        with doc.create(Figure(position = 'h!')) as figure:
+            figure.add_image(image_path, width = '120px')
+            figure.add_caption('Percentile = 0.5; Image 15')
+
+    doc.generate_pdf('problem3', clean_tex = False)
