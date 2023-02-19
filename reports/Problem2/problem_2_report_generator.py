@@ -57,4 +57,26 @@ if __name__ == '__main__':
             figure.add_image(image_path, width = '120px')
             figure.add_caption('Vector Image of Label = 1')
 
+    # Part 2
+    with doc.create(Section('Part 2')):
+        doc.append('''The ALS algorithm was used to reduce images to a size of 20 x 20. In Python using sklearn.ensemble,
+    a random forest classifier was trained with the specified hyper-parameters''')
+
+    # Part 3
+    with doc.create(Section('Part 3')):
+        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem2', 'problem2_1.txt'))
+        with open(data_path, 'r') as filedata:
+            file_contents = filedata.read()
+            doc.append(file_contents + '\n')
+
+        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem2', 'problem2_2.txt'))
+        with open(data_path, 'r') as filedata:
+            file_contents = filedata.read()
+            doc.append(file_contents + '\n')
+
+        data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem2', 'problem2_3.txt'))
+        with open(data_path, 'r') as filedata:
+            file_contents = filedata.read()
+            doc.append(file_contents + '\n')
+
     doc.generate_pdf('problem2', clean_tex = False)
