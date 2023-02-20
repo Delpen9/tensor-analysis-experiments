@@ -64,6 +64,10 @@ if __name__ == '__main__':
 
     # Part 3
     with doc.create(Section('Part 3')):
+        doc.append('''It appears that the random forest model is overfitting.
+        Two methods can be used to improve classication performance on the dataset:
+        (1) Further reduce the dimensionality of the data to remove noise from the image.
+        (2) Use models such as convolutional neural networks which are more capable of image classification.''')
         data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem2', 'problem2_1.txt'))
         with open(data_path, 'r') as filedata:
             file_contents = filedata.read()

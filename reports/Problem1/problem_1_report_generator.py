@@ -46,7 +46,6 @@ if __name__ == '__main__':
     current_path = os.path.abspath(__file__)
 
     # Part 1
-    # TODO: Find some way to write out the calculation
     with doc.create(Section('Part 1')):
         data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_1.txt'))
         with doc.create(Subsection('Subsection A')):
@@ -78,8 +77,11 @@ if __name__ == '__main__':
             doc.append(file_contents + '\n\n')
 
     # Part 3
-    # TODO: Include explanation
     with doc.create(Section('Part 3')):
+        doc.append('''In CP decomposition, the tensor is decomposed into a series of rank-1 tensors whereas in Tucker decompositon,
+        the tensor is decomposed into a core tensor and factor matrices. CP decomposition is capable of representing any non-negative tensor
+        to any desired accuracy; however, Tucker decomposition is only capable of representing tensors that have a lower rank structure.
+        Finally, CP decomposition is less computationally intensive than Tucker decomposition.''')
         data_path = os.path.abspath(os.path.join(current_path, '..', '..', '..', 'output', 'Problem1', 'problem1_6.txt'))
         with open(data_path, 'r') as filedata:
             file_contents = filedata.read()
