@@ -1,1 +1,1 @@
-The relative error for the core tensor is: 0.05343890097919052.
+The relative error for the core tensor is: 0.054192001668860484.

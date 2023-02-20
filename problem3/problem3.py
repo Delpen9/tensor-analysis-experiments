@@ -167,7 +167,9 @@ if __name__ == '__main__':
     relative_errors = []
     for percentile in percentiles:
         thresholded_core = hard_thresholding(core, percentile)
-        save_images_to_directory(thresholded_core, threshold_directory, fr'percentile_{str(percentile)[0] + str(percentile)[2]}_image')
+        reconstruction = tensorly.tenalg.multi_mode_dot(thresholded_core, factors, modes = [0, 1, 2])  
+
+        save_images_to_directory(reconstruction, threshold_directory, fr'percentile_{str(percentile)[0] + str(percentile)[2]}_image')
 
         relative_error_value = relative_error(_a, thresholded_core)
         relative_errors.append(relative_error_value)
